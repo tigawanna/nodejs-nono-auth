@@ -1,0 +1,14 @@
+{
+  "name": "honojs-auth",
+  "scripts": {
+    "dev": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.8.1",
+    "hono": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.20",
+    "tsx": "^4.7.1"
+  }
+}
