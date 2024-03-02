@@ -13,13 +13,13 @@ app.post("/signup", async (c) => {
       user,
     });
   } catch (error: any) {
-    console.log("====  error creating user  === ", error);
+    console.log("====  error signing up user  === ", error);
     return c.json(
       {
-        original_error: error,
+        message: error.message,
         cause: error.cause,
         stack: error.stack,
-        message: error.message,
+        original_error: error,
       },
       500
     );
@@ -34,8 +34,14 @@ app.post("/signin", async (c) => {
     return c.json({
       user,
     });
-  } catch (error) {
-    return c.json(error, 500);
+  } catch (error:any) {
+        console.log("====  error signing in user  === ", error);
+    return c.json({
+        message: error.message,
+        cause: error.cause,
+        stack: error.stack,
+        original_error: error,
+    }, 500);
   }
 });
 

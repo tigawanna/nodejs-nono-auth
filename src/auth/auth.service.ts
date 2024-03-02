@@ -24,7 +24,7 @@ export async function signupUser(user: Omit<UserInsertType, "id">) {
     });
   } catch (error) {
     // Handle errors appropriately
-    console.log("====  error creating user  === ", error);
+
     throw error;
   }
 }
@@ -43,7 +43,7 @@ export async function signinUser({emailOrUsername, password:pass}:SigninBody) {
     return rest
 
   }catch(err: any) {
-    console.log("====  error creating user  === ", err);
+
     throw err
   }
 }
