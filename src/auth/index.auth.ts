@@ -1,5 +1,7 @@
 import { Hono } from "hono";
 import { SignupBody } from "./types";
+import { createUser } from "@/users/service.users";
+
 
 const app = new Hono();
 
@@ -7,11 +9,18 @@ const app = new Hono();
 app.post("/signup", async (c) => {
   try {
     const body = await c.req.json<SignupBody>();
+    const user = await createUser(body);
     return c.json({
-      body,
+      user,
     });
-  } catch (error) {
-    return c.json(error, 500);
+  } catch (error:any) {
+    console.log("====  error creating user  === ", error);
+    return c.json({
+      original_error: error,
+      cause: error.cause,
+      stack: error.stack,
+      message: error.message
+    }, 500);
   }
 });
 
@@ -29,3 +38,4 @@ app.post("/signin", async (c) => {
 });
 
 export { app as authRoute };
+
