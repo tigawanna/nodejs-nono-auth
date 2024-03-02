@@ -32,6 +32,9 @@ dependencies:
   kleur:
     specifier: ^4.1.5
     version: 4.1.5
+  zod:
+    specifier: ^3.22.4
+    version: 3.22.4
 
 devDependencies:
   '@types/bcrypt':
