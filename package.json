@@ -1,14 +1,23 @@
 {
   "name": "honojs-auth",
   "scripts": {
-    "dev": "tsx watch src/index.ts"
+    "dev": "tsx watch src/index.ts",
+    "apply": "tsx src/db/apply.ts",
+    "migrate": "npx drizzle-kit generate:sqlite",
+    "push": "drizzle-kit push:sqlite"
   },
   "dependencies": {
     "@hono/node-server": "^1.8.1",
-    "hono": "^4.0.0"
+    "@libsql/client": "^0.5.2",
+    "better-sqlite3": "^9.4.3",
+    "drizzle-orm": "^0.29.4",
+    "hono": "^4.0.0",
+    "kleur": "^4.1.5"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.9",
     "@types/node": "^20.11.20",
+    "drizzle-kit": "^0.20.14",
     "tsx": "^4.7.1"
   }
 }
