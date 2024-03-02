@@ -1,8 +1,8 @@
 import { db } from "@/db/client";
 import { users_table } from "@/db/schema";
 import { count, eq, or } from "drizzle-orm";
-import bcrypt from "bcrypt";
-import { Certificate } from "crypto";
+
+
 export async function getPaginatedUsers(pageNumber = 1, pageSize = 10, count_rows = true) {
   try {
     const offset = (pageNumber - 1) * pageSize;
@@ -45,32 +45,26 @@ export async function findUserByEmailOrUsername(emailOrUsername: string) {
   }
 }
 
-type CreateUserType = (typeof users_table)["$inferInsert"];
 
-export async function createUser(user: Omit<CreateUserType, "id">) {
+export async function createUser(user: (typeof users_table)["$inferInsert"]) {
   try {
-    const user_with_email_exists = await findUserByEmailOrUsername(user.email);
-
-    if (user_with_email_exists?.[0]?.id) {
-      throw new Error("Email already exists");
-    }
-    const user_with_username_exists = await findUserByEmailOrUsername(user.username);
-    if (user_with_username_exists?.[0]?.id) {
-      throw new Error("Email already exists");
-    }
-    const hashedPassword = await bcrypt.hash(user.password, 10);
     const createdUser = await db
       .insert(users_table)
       .values({
         id: crypto.randomUUID(),
         email: user.email,
-        password: hashedPassword,
+        password: user.password,
         username: user.username,
       })
-      .returning();
+      .returning({
+        id: users_table.id,
+        email: users_table.email,
+        username: users_table.username,
+        createdAt: users_table.createdAt,
+        updatedAt: users_table.updatedAt,
+      });
     return createdUser;
   } catch (error) {
-    // Handle errors appropriately
     throw error;
   }
 }

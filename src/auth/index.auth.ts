@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { SignupBody } from "./types";
-import { createUser } from "@/users/service.users";
+import { signupUser } from "./auth.service";
+
 
 
 const app = new Hono();
@@ -9,7 +10,7 @@ const app = new Hono();
 app.post("/signup", async (c) => {
   try {
     const body = await c.req.json<SignupBody>();
-    const user = await createUser(body);
+    const user = await signupUser(body);
     return c.json({
       user,
     });
