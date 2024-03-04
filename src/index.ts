@@ -6,6 +6,7 @@ import { jwt } from "hono/jwt";
 import { SECRETS } from "./utils";
 import { env } from "hono/adapter";
 import dotenv from "dotenv";
+import { enviromentVariables } from "./lib/env";
 const app = new Hono();
 
 // load .env variables
@@ -27,7 +28,7 @@ app.use("/auth/*", (c, next) => {
 app.get("/", (c) => {
   console.log(
     " ====  access token   ====",
-    env<{ ACCESS_TOKEN_SECRET: string; REFRESH_TOKEN_SECRET: string }>(c)
+    enviromentVariables(c).ACCESS_TOKEN_SECRET
   );
   return c.text("Hello Hono! index route");
 });
