@@ -29,21 +29,28 @@ export async function signupUser(user: Omit<UserInsertType, "id">) {
   }
 }
 
-export async function signinUser({emailOrUsername, password:pass}:SigninBody) {
+export async function signinUser({ emailOrUsername, password: pass }: SigninBody) {
   try {
     const user = await findUserByEmailOrUsername(emailOrUsername);
-    if(!user?.[0]?.id) {
+    if (!user?.[0]?.id) {
       throw new Error("User not found");
     }
     const isPasswordValid = await bcrypt.compare(pass, user?.[0]?.password);
-    if(!isPasswordValid) {
+    if (!isPasswordValid) {
       throw new Error("Invalid password");
     }
-    const {password, ...rest} = user?.[0]
-    return rest
 
-  }catch(err: any) {
-
-    throw err
+    // const accessToken = generateAccessToken(user);
+    // const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
+    // refreshTokens.push(refreshToken);
+    // res.json({ accessToken: accessToken, refreshToken: refreshToken });
+    const { password, ...rest } = user?.[0];
+    return rest;
+  } catch (err: any) {
+    throw err;
   }
 }
+
+// function generateAccessToken(user) {
+//   return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15s" });
+// }
