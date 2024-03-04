@@ -1,59 +1,43 @@
 import { Hono } from "hono";
 import { SigninBody, SignupBody, signinBodySchema, signupBodySchema } from "./types";
-import { signinUser, signupUser } from "./auth.service";
-import { decode, sign, verify } from "hono/jwt";
-import { SECRETS } from "@/utils";
+import { createAccessToken, readRefreshToken, signinUser, signupUser } from "./auth.service";
+
+import { signinRoute } from "./signin/index.signin";
+import { signupRoute } from "./signup/index.signup";
 
 const app = new Hono();
 
-//  auth/signup
-app.post("/signup", async (c) => {
-  try {
-    const body = signupBodySchema.parse(await c.req.json<SignupBody>());
-    const user = await signupUser(body);
-    const { JWT_SECRET } = SECRETS.parse(c.env);
-    const token = await sign(user, JWT_SECRET);
-    return c.json({
-      user,
-      token,
-    });
-  } catch (error: any) {
-    console.log("====  error signing up user  === ", error);
-    return c.json(
-      {
-        message: error.message,
-        cause: error.cause,
-        stack: error.stack,
-        original_error: error,
-      },
-      500
-    );
-  }
-});
 
-//  auth/signin
-app.post("/signin", async (c) => {
+app.post("/test", async (c) => {
+  const form_data = c.req.formData();
+  console.log(" ==== form data ==== ", form_data);
+})
+
+app.route("/signin",signinRoute);
+app.route("/signup",signupRoute);
+
+//  auth/srefresh
+app.post("/refresh", async (c) => {
   try {
-    const body = signinBodySchema.parse(await c.req.json<SigninBody>());
-    const user = await signinUser(body);
-    const { JWT_SECRET } = SECRETS.parse(c.env);
-    const token = await sign(user, JWT_SECRET);
+    const refresh_token_payload = await readRefreshToken(c);
+    console.log("refresh_token_payload", refresh_token_payload);
+  // const token = await sign(user, REFRESH_TOKEN_SECRET);
     return c.json({
-      user,
-      token,
-    });
-  } catch (error: any) {
-    console.log("====  error signing in user  === ", error);
+      refresh_token_payload
+    })
+  }catch(e: any) {
+    console.log("====  error verifying refresh token  === ", e);
     return c.json(
       {
-        message: error.message,
-        cause: error.cause,
-        stack: error.stack,
-        original_error: error,
+        message: e.message,
+        cause: e.cause,
+        stack: e.stack,
+        original_error: e,
       },
       500
     );
+
   }
-});
+})
 
 export { app as authRoute };
