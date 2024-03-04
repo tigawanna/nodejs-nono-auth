@@ -15,22 +15,23 @@ app.use(async (_, next) => {
   await next();
 });
 
-app.use("/auth/*", (c, next) => {
-
-  const { JWT_SECRET } = SECRETS.parse(c.env);
-  const jwtMiddleware = jwt({
-    secret: JWT_SECRET,
-    cookie: "hono_auth",
-  });
-  return jwtMiddleware(c, next);
-});
+// app.use("/auth/*", (c, next) => {
+//   const { ACCESS_TOKEN_SECRET } = enviromentVariables(c);
+//   const jwtMiddleware = jwt({
+//     secret: ACCESS_TOKEN_SECRET,
+//     cookie: "hono_auth",
+//   });
+//   return jwtMiddleware(c, next);
+// });
 
 app.get("/", (c) => {
-  console.log(
-    " ====  access token   ====",
-    enviromentVariables(c).ACCESS_TOKEN_SECRET
-  );
+  console.log(" ====  auth headers   ====", c.req.header("Authorization"));
   return c.text("Hello Hono! index route");
+});
+app.get("/auth/uwu", (c) => {
+    const payload = c.get("jwtPayload");
+  console.log(" ====  auth headers   ====", payload);
+  return c.text("Hello Hono! auth/uwu route");
 });
 
 app.route("/users", usersRoute);
