@@ -1,13 +1,7 @@
-sh```
-npm install
-npm run dev
-```
-
-```
-open http://localhost:3000
-```
+# Simple NodeJS JWT auth server
 
 > [!NOTE]
->
-> Check types at [`TSDocs`](https://tsdocs.dev/docs/drizzle-cursor/latest/index.html)
->
+ Rolling your own auth is highly discouraged in serious applications 
+
+
+
