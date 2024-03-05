@@ -4,7 +4,7 @@ export function SigninCompopnent({}: SigninCompopnentProps) {
   return (
     <div className="w-full h-full flex flex-col items-center justify-center">
       <form
-        action="/auth/test"
+        action="/auth/signin"
         method="POST"
         class="w-[95%] md:w-[60%] lg:w-[50%] flex flex-col items-center justify-center p-2 gap-2">
         <div class="w-full flex flex-col">

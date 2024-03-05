@@ -1,16 +1,16 @@
 import { Hono } from "hono";
-import { SigninBody, SignupBody, signinBodySchema, signupBodySchema } from "./types";
-import { createAccessToken, readRefreshToken, signinUser, signupUser } from "./auth.service";
-
+import { readRefreshToken} from "./auth.service";
 import { signinRoute } from "./signin/index.signin";
 import { signupRoute } from "./signup/index.signup";
+import { setCookie } from "hono/cookie";
 
 const app = new Hono();
 
 
 app.post("/test", async (c) => {
+
   const form_data = c.req.formData();
-  console.log(" ==== form data ==== ", form_data);
+  return c.json({form_data})
 })
 
 app.route("/signin",signinRoute);

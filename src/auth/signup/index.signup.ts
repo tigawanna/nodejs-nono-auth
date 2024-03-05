@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { createAccessToken, signupUser } from "../auth.service";
+import { createAccessToken, createRefreshToken, signupUser } from "../auth.service";
 import { SignupBody, signupBodySchema } from "../types";
 
 const app = new Hono();
@@ -12,9 +12,9 @@ app.post("/", async (c) => {
   try {
     const body = signupBodySchema.parse(await c.req.json<SignupBody>());
     const user = await signupUser(body);
-    const user_id = user[0]?.id;
-    const access_token = createAccessToken(c, { id: user_id });
-
+    const user_payload = { id: user[0]?.id };
+    const access_token = createAccessToken(c, user_payload);
+    await createRefreshToken(c, user_payload);
     return c.json({
       user,
       access_token,

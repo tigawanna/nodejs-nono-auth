@@ -1,28 +1,33 @@
-import { enviromentVariables } from "@/lib/env";
 import { Hono } from "hono";
-import { setCookie } from "hono/cookie";
-import { sign } from "hono/jwt";
-import { signinUser } from "../auth.service";
+import { createAccessToken, createRefreshToken, signinUser } from "../auth.service";
 import { signinBodySchema, SigninBody } from "../types";
-import {AuthLayout} from "../layout.auth"
-import { SigninCompopnent } from "./components/SigninCompopnent";
 
 
 const app = new Hono();
 
-app.get("/", (c) => {
-    return c.html(<AuthLayout title="Signin"><SigninCompopnent/></AuthLayout>)
-})
+// app.get("/", (c) => {
+//  const form_action_json = c.req.json().then((data) => {
+//   console.log("=========== returned actio data =======",data)
+// })
+// .catch((error) => {
+//   console.log("=========== error =======",error.message)
+// })
+
+//   return c.html(
+//     <AuthLayout title="Signin">
+//       <SigninCompopnent />
+//     </AuthLayout>
+//   );
+// });
 
 app.post("/", async (c) => {
   try {
     const body = signinBodySchema.parse(await c.req.json<SigninBody>());
     const user = await signinUser(body);
     const user_payload = { id: user.id };
-    const { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } = enviromentVariables(c);
-    const access_token = await sign(user_payload, ACCESS_TOKEN_SECRET);
-    const refresh_token = await sign(user_payload, REFRESH_TOKEN_SECRET);
-    setCookie(c, "kjz", refresh_token, { path: "/", httpOnly: true });
+    const access_token = await createAccessToken(c, user_payload);
+    await createRefreshToken(c, user_payload);
+
     return c.json({
       user,
       access_token,
@@ -41,4 +46,4 @@ app.post("/", async (c) => {
   }
 });
 
-export {app as signinRoute}
+export { app as signinRoute };
